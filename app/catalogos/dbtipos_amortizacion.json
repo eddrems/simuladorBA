@@ -1,0 +1,10 @@
+[
+    {
+        "id": "F",
+        "denominacion": "Sistema Francés (Fija)"
+    },
+    {
+        "id": "A",
+        "denominacion": "Sistema Alemán (Decreciente)"
+    }
+]

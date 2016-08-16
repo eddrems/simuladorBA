@@ -1,0 +1,405 @@
+<div id="div_parametros" class="bg-white">
+    <div class="row" style="padding-top: 50px;">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="h1 text-u-c text-dark font-thin l-h-2x text-center"  >Diseñe su Cr&eacute;dito</div>
+            <div class=" text-center">
+            </div>
+            <form class="form-horizontal" method="post" id="frm_params" style="padding: 20px;">
+
+
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Segmento:</label>
+                    <div class="col-sm-7" >
+                        <select ng-model="segmento_def" ng-options="segmento.denominacion group by segmento.parent for segmento in segmentos track by segmento.id" class="form-control" ng-change="actualizarValidaciones()"></select>
+                        <div class="alert alert-info" style="margin-top: 3px; margin-bottom: 0px; text-align: justify;"> <i class="fa fa-info-sign"></i><strong>{{ segmento_def.denominacion }}:</strong> {{ segmento_def.informacion }} </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Monto Solicitado:</label>
+                    <div class="col-sm-7">
+                        <input type="text" ng-model="datos_credito.monto" class="form-control" data-required="true" data-type="number" id="monto" data-range="[{{segmento_def.monto_minimo}}, {{segmento_def.monto_maximo}}]" >
+                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Monto M&iacute;nimo <strong>{{ segmento_def.monto_minimo }}</strong> &nbsp;&nbsp;&nbsp; Monto M&aacute;ximo <strong>{{ segmento_def.monto_maximo }}.</strong></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Modalidad:</label>
+                    <div class="col-sm-7">
+                        <select ng-model="modos_def" ng-options="modo.denominacion for modo in modos track by modo.id" class="form-control" ng-change="actualizarUIMetodoPago()" ></select>
+                    </div>
+                </div>
+                
+                
+                 <div class="form-group">
+                    <label class="col-sm-4 control-label">Frecuencia de Pago:</label>
+                    <div class="col-sm-7">
+                        <select ng-model="frecuencias_pago_seleccionada" ng-options="frecuencia.denominacion for frecuencia in frecuencias_pago track by frecuencia.id" class="form-control" ng-change="calcularNumeroCuotas()" ></select>
+                        
+                        <!--Plazo en: <select ng-model="tipo_plazo_seleccionada" ng-options="plazo.denominacion for plazo in tipo_plazo track by plazo.id" class="form-control" ng-change="test()" ></select>-->
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Plazo de Pago:</label>
+                    <div class="col-sm-7">
+                        <input type="text" id="plazo" ng-model="datos_credito.plazo" class="form-control" data-required="true" data-type="digits" data-range="[{{plazo_minimo}}, {{plazo_maximo}}]" >
+                        <select ng-show="!modos_def.genera_tabla_amortizacion" ng-model="periodicidad_def" ng-options="periodicidad.denominacion for periodicidad in periodicidades track by periodicidad.id" class="form-control" style="margin-top: 5px;" ng-change="actualizarValidaciones()"></select>
+                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ periodicidad_def.texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ periodicidad_def.texto }}</strong></span>
+                    </div>
+                </div>
+                
+                <!--<h1> {{ frecuencias_pago_seleccionada.factor_calculo_mensual }}</h1>-->
+                
+                <!--<h1> {{ numeroCuotas }}</h1>-->
+                
+                <div class="form-group" ng-show="modos_def.genera_tabla_amortizacion">
+                    <label class="col-sm-4 control-label">Tipo de Amortizaci&oacute;n:</label>
+                    <div class="col-sm-7">
+                        <select ng-model="metodo_amortizacion_def" ng-options="metodo.denominacion for metodo in metodos_amortizacion track by metodo.id" class="form-control"></select>
+                    </div>
+                </div>
+
+
+            </form>
+            <p class="text-center m-b-xl">
+                <a ng-href="./" class="btn btn-lg btn-dark b-2x btn-rounded m-sm" >Limpiar</a>
+                <button ng-click="generarSimulacion()" class="btn b-2x btn-lg btn-primary btn-rounded m-sm">Generar Simulaci&oacute;n</button>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="div_tabla_amortizacion" class="bg-white-only hidden-print" style="display: none;">
+<div class="container">
+        <div class="m-t-sm m-b-sm text-center wrapper">
+            <h3 class="text-u-c text-dark">Tabla de Amortizaci&oacute;n</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-1">&nbsp;</div>
+            <div class="col-md-7">
+                <section class="panel panel-default">
+                    <div class="panel-body bg-light">
+                        <div class="form-horizontal" style="padding: 0px; padding-top: 0px;">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group" style="margin: 0px;">
+                                        <label class="control-label"><small class="text-muted">Segmento:</small></label>
+                                        <h5 style="margin: 0px;"><strong>{{ segmento_def.denominacion  }}</strong></h5>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group" style="margin: 0px;">
+                                        <label class="control-label"><small class="text-muted">Monto:</small></label>
+                                        <h5 style="margin: 0px;"><strong>{{ datos_credito.monto | numeraljs:'0,0.00'  }}</strong></h5>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group" style="margin: 0px;">
+                                        <label class="control-label"><small class="text-muted">Tasa de Interes Nominal:</small></label>
+                                        <!--<h5 style="margin: 0px;"><strong>{{ segmento_def.tasa_interes | numeraljs:'0,0.00' }} %</strong></h5>-->
+                                        <h5 style="margin: 0px;"><strong>{{ tasa_nominal_porc | numeraljs:'0,0.00' }} %</strong></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <!--<div class="form-group" style="margin: 0px;">
+                                        <label class="control-label"><small class="text-muted">Subsegmento:</small></label>
+                                        <h5 style="margin: 0px;"><strong>######</strong></h5>
+                                    </div>-->
+                                    <div class="form-group" style="margin: 0px;">
+                                        <label class="control-label"><small class="text-muted">Sistema de Amortizaci&oacute;n:</small></label>
+                                        <h5 style="margin: 0px;"><strong>{{ metodo_amortizacion_def.denominacion  }}</strong></h5>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group" style="margin: 0px;">
+                                        <label class="control-label"><small class="text-muted">Plazo:</small></label>
+                                        <h5 style="margin: 0px;"><strong>{{ datos_credito.plazo  }}</strong></h5>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group" style="margin: 0px;">
+                                        <label class="control-label"><small class="text-muted">Tasa Contribuci&oacute;n SOLCA:</small></label>
+                                        <h5 style="margin: 0px;"><strong>0,5 %</strong></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <table class="table table-bordered table-striped table-hover" id="tab_amortizacion">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">No. de Pago</th>
+                            <th style="width: 100px;"> Fecha</th>
+                            <th style="width: 100px;"> No. de Dias</th>
+                            <th style="width: 130px;">Capital</th>
+                            <th style="width: 130px;">Inter&eacute;s</th>
+                            <th style="width: 140px;">Valor Cuota</th>
+                            <th style="width: 140px;">Seguro Desgravamen</th>
+                            <th>Saldo Capital</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="fila in tabla_amortizacion">
+                            <td style="text-align: right;">{{ fila.no_pago }}</td>
+                            
+                            <!-- COLUMNAS NUEVAS FECHA Y NRO DE DIAS-->
+                            <td style="text-align: right;">{{ fila.fecha }}</td>
+                            <td style="text-align: right;">{{ fila.no_dias }}</td>
+                            <td style="text-align: right;">{{ fila.capital_amortizado | numeraljs:'0,0.00'  }}</td>
+                            <td style="text-align: right;">{{ fila.interes | numeraljs:'0,0.00' }}</td>
+                            <td style="text-align: right;">{{ fila.valor_cuota | numeraljs:'0,0.00'  }}</td>
+                            
+                            <!-- COLUMNA NUEVA SEGURO DE DESGRAVAMEN-->
+                            <td style="text-align: right;">{{ fila.seguro_desgravamen | numeraljs:'0,0.00' }}</td>
+                            <td style="text-align: right;">{{ fila.saldo_capital | numeraljs:'0,0.00' }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td style="text-align: right; font-weight: bold;">TOTAL:</td>
+                            <td></td><td></td>
+                            <td style="text-align: right; font-weight: bold;">{{ datos_credito.capital_total | numeraljs:'0,0.00' }}</td>
+                            <td style="text-align: right; font-weight: bold;">{{ datos_credito.interes_total | numeraljs:'0,0.00' }}</td>
+                            <td style="text-align: right; font-weight: bold;">{{ datos_credito.valor_cuota_total | numeraljs:'0,0.00' }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <div style="margin-top: 20px; font-size: 11pt; font-weight: bold" >* Los resultados son informativos y no constituyen una pre aprobaci&oacute;n del cr&eacute;dito.</div>
+            </div>
+            <div class="col-md-3">
+                <section class="panel panel-default">
+                    <div class="panel-body bg-light">
+                        <a href="javascript:void(0);" class="btn btn-primary btn-md btn-block" onclick="$('#reporte_contenido').val($('#reporte_datos').html()); $('#frm_reporte').submit()"><i class="fa fa-print pull-right"></i> Imprimir</a>
+                        <a ng-href="./" class="btn btn-default btn-md btn-block"><i class="fa fa-undo pull-right"></i> Regresar</a>
+                        <div class="form-group" style="margin: 0px; margin-top: 20px">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Tasa de Inter&eacute;s  Efectiva:</small></label>
+                            <!--<h5 style="margin: 0px;" class="pull-right"><strong>{{ segmento_def.tasa_efectiva | numeraljs:'0,0.00'  }} %</strong></h5>-->
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ tasa_efectiva_porc  | numeraljs:'0,0.00'  }} %</strong></h5>
+                        </div>
+                        <div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Inter&eacute;s:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.interes_total | numeraljs:'0,0.00' }}</strong></h5>
+                        </div>
+                        <!--<div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Tasa  anual del costo del cr&eacute;dito:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ segmento_def.tasa_interes }}</strong></h5>
+                        </div>-->
+                        <!--<div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Monto financiado:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.monto }}</strong></h5>
+                        </div>-->
+                        <div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Monto l&iacute;quido:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.monto | numeraljs:'0,0.00' }}</strong></h5>
+                        </div>
+                        <div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Total:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.valor_total | numeraljs:'0,0.00'  }}</strong></h5>
+                        </div>
+                        <div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Cuota mensual estimada:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.valor_cuota_aproximado | numeraljs:'0,0.00'  }}</strong></h5>
+                        </div>
+                        <div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Costos y Gastos:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>0,00</strong></h5>
+                        </div>
+                        <div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Seguro de desgravamen:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.seguro_desgravamen | numeraljs:'0,0.00' }}</strong></h5>
+                        </div>
+                        <!--<div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Valor total referencial:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ segmento_def.tasa_interes }}</strong></h5>
+                        </div>-->
+                        <!--<div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Relaci&oacute;n de valores:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.res_valor_relacion | numeraljs:'0,0.00'  }}</strong></h5>
+                        </div>-->
+                        <div class="form-group" style="margin: 0px;">
+                            <label class="control-label" style="margin:0px"><small class="text-muted">Contribuci&oacute;n SOLCA:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.valor_solca | numeraljs:'0,0.00'  }}</strong></h5>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-md-1">&nbsp;</div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="reporte_datos" style="display: none; width: 21cm;">
+
+
+        <div class="content">
+            <br>
+            <table style="width: 19.5cm; border: solid 1px #23214A; " cellpadding="0" cellspacing="0">
+                <tr>
+                    <td style="background-color: #23214A; text-align: center; color: #ffffff; padding: 5px; font-weight: bold; font-size:12px">
+                        DATOS DE LA OPERACI&Oacute;N DE CR&Eacute;DITO SOLICITADA
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table cellspacing="3" style="width: 100%">
+                            <tbody>
+                                <tr>
+                                    <td colspan="3"><strong>Segmento:</strong><br />{{ segmento_def.denominacion  }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tasa de Interes Nominal:</strong><br />{{ segmento_def.tasa_interes | numeraljs:'0,0.00' }} %</td>
+                                    <td><strong>Sistema de Amortizaci&oacute;n:</strong><br />{{ metodo_amortizacion_def.denominacion  }}</td>
+                                    <td><strong>Plazo:</strong><br />{{ datos_credito.plazo  }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tasa de Inter&eacute;s  efectiva:</strong><br />{{ segmento_def.tasa_efectiva | numeraljs:'0,0.00'  }} %</td>
+                                    <td><strong>Inter&eacute;s:</strong><br />{{ datos_credito.interes_total | numeraljs:'0,0.00' }}</td>
+                                    <td><strong>Monto l&iacute;quido:</strong><br />{{ datos_credito.monto | numeraljs:'0,0.00' }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total:</strong><br />{{ datos_credito.valor_total | numeraljs:'0,0.00'  }}</td>
+                                    <td><strong>Cuota mensual estimada:</strong><br />{{ datos_credito.valor_cuota_aproximado | numeraljs:'0,0.00'  }}</td>
+                                    <td><strong>Costos y Gastos:</strong><br />0,00</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Seguro de desgravamen:</strong><br />{{ datos_credito.seguro_desgravamen | numeraljs:'0,0.00' }}</td>
+                                    <!--<td><strong>Relaci&oacute;n de valores:</strong><br />{{ datos_credito.res_valor_relacion | numeraljs:'0,0.00'  }}</td>-->
+                                    <td><strong>SOLCA:</strong><br />{{ datos_credito.valor_solca | numeraljs:'0,0.00'  }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="sample" style="width: 19.5cm; border: solid 1px #23214A; " cellpadding="0" cellspacing="0">
+                <thead>
+                <tr>
+                    <th colspan="8" style="background-color: #23214A; text-align: center; color: #ffffff; padding: 5px; font-weight: bold; font-size:12px">
+                        DATOS DE LA OPERACI&Oacute;N DE CR&Eacute;DITO SOLICITADA
+                    </th>
+                </tr>
+                <tr>
+                    <th style="width: 80px; background-color: #FCEDEC;">No. de Pago</th>
+                    <th style="width: 80px; background-color: #FCEDEC;">Fecha</th>
+                    <th style="width: 80px; background-color: #FCEDEC;">No. de Dias</th>
+                    <th style="width: 80px; background-color: #FCEDEC;">Capital</th>
+                    <th style="width: 80px; background-color: #FCEDEC;">Inter&eacute;s</th>
+                    <th style="width: 80px; background-color: #FCEDEC;">Valor Cuota</th>
+                    <th style="width: 80px; background-color: #FCEDEC;">Seguro Desgravamen</th>
+                    <th style="width: 80px; background-color: #FCEDEC;">Saldo Capital</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr data-ng-repeat="fila in tabla_amortizacion">
+                        <td style="text-align: right;">{{ fila.no_pago }}</td>
+                        <td style="text-align: right;">{{ fila.fecha }}</td>
+                        <td style="text-align: right;">{{ fila.no_dias }}</td>
+                        <td style="text-align: right;">{{ fila.capital_amortizado | numeraljs:'0,0.00' }}</td>
+                        <td style="text-align: right;">{{ fila.interes | numeraljs:'0,0.00' }}</td>
+                        <td style="text-align: right;">{{ fila.valor_cuota | numeraljs:'0,0.00' }}</td>
+                        <td style="text-align: right;">{{ fila.seguro_desgravamen | numeraljs:'0,0.00' }}</td>
+                        <td style="text-align: right;">{{ fila.saldo_capital | numeraljs:'0,0.00' }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td style="text-align: right; font-weight: bold; background-color: #FCEDEC;">TOTAL:</td>
+                        <td></td><td></td>
+                        <td style="text-align: right; font-weight: bold; background-color: #FCEDEC;">{{ datos_credito.capital_total | numeraljs:'0,0.00' }}</td>
+                        <td style="text-align: right; font-weight: bold; background-color: #FCEDEC;">{{ datos_credito.interes_total | numeraljs:'0,0.00' }}</td>
+                        <td style="text-align: right; font-weight: bold; background-color: #FCEDEC;">{{ datos_credito.valor_cuota_total | numeraljs:'0,0.00' }}</td>
+                        <td style="text-align: right; background-color: #FCEDEC;">&nbsp;</td>
+                        <td style="text-align: right; background-color: #FCEDEC;">&nbsp;</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div style=" text-align: center; width: 100%; page-break-before: always;" >
+                <table class="sample" style="width: 10cm; border: solid 1px #23214A;" cellpadding="0" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th colspan="2" style="background-color: #23214A; text-align: center; color: #ffffff; padding: 5px; font-weight: bold; font-size:12px">
+                            INTER&Eacute;S POR MORA
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="width: 50%; background-color: #FCEDEC;">D&Iacute;AS DE RETRASO HASTA EL D&Iacute;A DE PAGO</th>
+                        <th style=" background-color: #FCEDEC;">RECARGO POR MOROSIDAD HASTA</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td style="text-align: center;">0</td><td style="text-align: center;">0%</td></tr>
+                    <tr><td style="text-align: center;">ene-15</td><td style="text-align: center;">5%</td></tr>
+                    <tr><td style="text-align: center;">16-30</td><td style="text-align: center;">7%</td></tr>
+                    <tr><td style="text-align: center;">31-60</td><td style="text-align: center;">9%</td></tr>
+                    <tr><td style="text-align: center;">+60</td><td style="text-align: center;">10%</td></tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div style="text-align: justify">
+                <p>
+                    <strong>Monto financiado:</strong> Comprende la sumatoria del valor del cr&eacute;dito otorgado, m&aacute;s costos de mantenimiento, costos de seguro y m&aacute;s cargos obligatorios que de  acuerdo a la modalidad del cr&eacute;dito, sean aplicados a la operaci&oacute;n.
+                </p>
+                <p>
+                    <strong>Monto l&iacute;quido:</strong> Es el valor que usted como deudor recibe en efectivo al momento del otorgamiento del cr&eacute;dito o que es acreditado a su cuenta o entregada a trav&eacute;s de un medio de pago.
+                </p>
+                <p>
+                    <strong>Tasa de inter&eacute;s efectiva:</strong> Es la tasa de inter&eacute;s para operaciones activas de cr&eacute;dito, cuyo c&aacute;lculo se hace tomando en cuenta la totalidad de los cargos que la entidad aplica al cliente.
+                </p>
+                <p>
+                    <strong>Tasa de inter&eacute;s variable:</strong> Es la tasa que puede ser modificada de acuerdo a condiciones preestablecidas.
+                </p>
+                <p>
+                    <strong>Tasa de mora:</strong> Es la tasa aplicada a un pago que ha entrado en mora. Revisar tabla de valores por rango de cuota y d&iacute;as de mora.
+                </p>
+                <p>
+                    <strong>Gastos:</strong> Son los valores en que debe incurrir el cliente por concepto de notar&iacute;as, aval&uacute;os, otros impuestos, etc.
+                </p>
+
+                <p>
+                    El cliente / solicitante manifiesta su total conformidad con lo estipulado en este documento y la solicitud de cr&eacute;dito.<br>
+                    La validez de este documento es de cinco d&iacute;as calendario, excepto cuando el Banco Central modifique la tasa activa m&aacute;xima referencial.
+                    <br><br>
+                    <strong>* Los resultados son informativos y no constituyen una pre aprobaci&oacute;n del cr&eacute;dito.</strong>
+                </p>
+                <br><br>
+                <table border="0" style="width: 100%">
+                    <tr>
+                        <td style="width: 50%; text-align: center;">f) _________________________________<br>El Cliente / Solicitante</td>
+                        <td style="width: 50%; text-align: center;">f) _________________________________<br>Ejecutivo de Negocios</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+</div>
+
+<div style="display: none; ">
+    <form id="frm_reporte" action="report.php" method="post" target="_blank">
+        <textarea name="reporte_contenido"  id="reporte_contenido"  ></textarea>
+    </form>
+</div>

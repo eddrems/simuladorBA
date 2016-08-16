@@ -1,0 +1,91 @@
+[
+{
+"id": 1,
+"denominacion": "Consumo",
+"monto_minimo": 1000,
+"monto_maximo": 20000,
+"plazo_minimo": 12,
+"plazo_maximo": 48,
+"tasa_interes": 15.20,
+"tasa_efectiva": 16.30,
+"tasa_interes_porc": 0.152,
+"informacion": "Crédito otorgado a personas naturales, destinado al pago de bienes, servicios o gastos no relacionados con una actividad productiva, cuya fuente de pago es el ingreso neto mensual promedio del deudor como sueldo, salario, honorarios, remesas, rentas."
+},
+{
+"id": 6,
+"parent" : "Microcrédito",
+"denominacion": "Acumulación Simple",
+"monto_minimo": 1000,
+"monto_maximo": 10000,
+"plazo_minimo": 12,
+"plazo_maximo": 48,
+"tasa_interes": 19.50,
+"tasa_efectiva": 27.50,
+"tasa_interes_porc": 0.1950,
+"informacion": "-"
+},
+{
+"id": 7,
+"parent" : "Microcrédito",
+"denominacion": "Acumulación Ampliada",
+"monto_minimo": 10001,
+"monto_maximo": 30000,
+"plazo_minimo": 12,
+"plazo_maximo": 48,
+"tasa_interes": 19.50,
+"tasa_efectiva": 25.50,
+"tasa_interes_porc": 0.1950,
+"informacion": "-"
+},
+{
+"id": 2,
+"parent" : "Comercial",
+"denominacion": "Comercial PYME",
+"monto_minimo": 3000,
+"monto_maximo": 200000,
+"plazo_minimo": 1,
+"plazo_maximo": 60,
+"tasa_interes": 11.23,
+"tasa_efectiva": 11.83,
+"tasa_interes_porc": 0.1123,
+"informacion": "Son los créditos otorgados a personas naturales o jurídicas, legalmente habilitadas para contratar y obligarse, dedicadas a desarrollar actividades: productivas, de comercio o servicios, cuyos Ingresos o Ventas anuales sean mayor o igual US$100,000.00 y menor a US$1,000,000.00, cuya fuente de pago provenga de dicha actividad."
+},
+{
+"id": 3,
+"parent" : "Comercial",
+"denominacion": "Comercial Corporativo",
+"monto_minimo": 10000,
+"monto_maximo": 20000000,
+"plazo_minimo": 1,
+"plazo_maximo": 60,
+"tasa_interes": 9.02,
+"tasa_efectiva": 9.33,
+"tasa_interes_porc": 0.0902,
+"informacion": "Son los créditos otorgados a personas naturales o jurídicas, legalmente habilitadas para contratar y obligarse, dedicadas a desarrollar actividades: productivas, de comercio o servicios, cuyos Ingresos o Ventas anuales sean iguales o superiores a cinco millones de dólares de los Estados Unidos de América (US$ 5.000.000,00), cuya fuente de pago provenga de dicha actividad."
+},
+{
+"id": 4,
+"parent" : "Comercial",
+"denominacion": "Comercial Empresarial",
+"monto_minimo": 10000,
+"monto_maximo": 20000000,
+"plazo_minimo": 1,
+"plazo_maximo": 60,
+"tasa_interes": 9.76,
+"tasa_efectiva": 10.21,
+"tasa_interes_porc": 0.0976,
+"informacion": "Son los créditos otorgados a personas naturales o jurídicas, legalmente habilitadas para contratar y obligarse, dedicadas a desarrollar actividades: productivas, de comercio o servicios, cuyos Ingresos o Ventas anuales sean mayor o igual a un millón de dólares de los Estados Unidos de América (US$ 1.000.000,00) y menores a cinco millones de dólares de los Estados Unidos de América (US$ 5.000.000,00), cuya fuente de pago provenga de dicha actividad."
+},
+{
+"id": 5,
+"denominacion": "Vivienda",
+"monto_minimo": 10000,
+"monto_maximo": 2000000,
+"plazo_minimo": 56,
+"plazo_maximo": 120,
+"tasa_interes": 10.78,
+"tasa_efectiva": 11.33,
+"tasa_interes_porc": 0.1078,
+"informacion": "Son los créditos otorgados a personas naturales (dependientes o independientes) para la adquisición, construcción de vivienda propia; siempre que se encuentren amparados con garantía hipotecaria, que abarca a la hipoteca directa a favor del Banco; y, que hayan sido otorgados al usuario final del inmueble. Se incluyen en este grupo los créditos otorgados para la adquisición de terrenos, siempre y cuando sea para la construcción de vivienda propia y para el usuario final del inmueble."
+}
+]

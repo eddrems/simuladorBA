@@ -1,0 +1,17 @@
+[
+    {
+        "id": "1",
+        "denominacion": "Meses",
+        "texto": "mes(es)",
+        "factor_calculo": 1,
+        "factor_calculo_dias": 30
+    },
+    {
+        "id": "2",
+        "denominacion": "Días",
+        "texto": "día(s)",
+        "factor_calculo": 30,
+        "factor_calculo_dias": 1
+    }
+     
+]

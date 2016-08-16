@@ -1,0 +1,12 @@
+{
+    "id": 4,
+    "denominacion": "Microcredito",
+    "monto_minimo": 0,
+    "monto_maximo": 50000,
+    "plazo_minimo": 1,
+    "plazo_maximo": 56,
+    "tasa_interes": 19.50,
+    "tasa_efectiva": 21.34,
+    "tasa_interes_porc": 0.1950,
+    "esta_activo": 0
+},
