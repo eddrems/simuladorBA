@@ -184,12 +184,12 @@ app.factory('simuladorFactory', function ($http) {
 
 
                     if(no_pago_detalle == 1){
-                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString());
+                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString("es-ES"));
                     }
                     else{
-                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString());
+                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString("es-ES"));
                     }
-                    fecha_actual = fecha_cuota.toLocaleDateString();
+                    fecha_actual = fecha_cuota.toLocaleDateString("es-ES");
 
 
                     capital_amortizado_detalle = (datos_credito.monto / datos_credito.plazo);
@@ -230,7 +230,7 @@ app.factory('simuladorFactory', function ($http) {
                     tabla_amortizacion.push(
                         {
                             no_pago:  no_pago_detalle,
-                            fecha: fecha_cuota.toLocaleDateString(),
+                            fecha: fecha_cuota.toLocaleDateString("es-ES"),
                             no_dias: no_dias_detalle,
                             capital_amortizado: capital_amortizado_detalle,
                             interes: interes_detalle,
@@ -264,12 +264,12 @@ app.factory('simuladorFactory', function ($http) {
                     
                     
                     if(no_pago_detalle == 1){
-                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString()); 
+                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString("es-ES"));
                     }
                     else{
-                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString());
+                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString("es-ES"));
                     }
-                    fecha_actual = fecha_cuota.toLocaleDateString();
+                    fecha_actual = fecha_cuota.toLocaleDateString("es-ES");
                     
                     //interes_detalle = saldo_capital_detalle * segmento_def.tasa_interes_porc / 360 * no_dias_detalle;
                     
@@ -307,7 +307,7 @@ app.factory('simuladorFactory', function ($http) {
                     tabla_amortizacion.push(
                         {
                             no_pago: no_pago_detalle,
-                            fecha: fecha_cuota.toLocaleDateString(),
+                            fecha: fecha_cuota.toLocaleDateString("es-ES"),
                             no_dias: no_dias_detalle,
                             capital_amortizado: capital_amortizado_detalle,
                             interes: interes_detalle,
