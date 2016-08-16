@@ -178,37 +178,60 @@ app.factory('simuladorFactory', function ($http) {
             if (metodo_amortizacion_def.id == "A") {
                 while (Math.round(saldo_capital_detalle) > 0 && no_pago_detalle < datos_credito.plazo) {
                     no_pago_detalle = no_pago_detalle + 1;
+
+                    //fecha_cuota***********************
+                    fecha_cuota.setMonth(fecha_cuota.getMonth() + frecuencias_pago_seleccionada.factor_calculo_mensual);
+
+
+                    if(no_pago_detalle == 1){
+                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString());
+                    }
+                    else{
+                        no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString());
+                    }
+                    fecha_actual = fecha_cuota.toLocaleDateString();
+
+
                     capital_amortizado_detalle = (datos_credito.monto / datos_credito.plazo);
                     if(this.contarDecimals(capital_amortizado_detalle) > 2){
                         capital_amortizado_detalle =  this.truncarDecimales(capital_amortizado_detalle);
                     }
 
-                    interes_detalle = ((segmento_def.tasa_interes_porc / 12) * saldo_capital_detalle);
-                    if(this.contarDecimals(interes_detalle) > 2){
+                    //interes_detalle = ((segmento_def.tasa_interes_porc / 12) * saldo_capital_detalle);
+                    interes_detalle = saldo_capital_detalle * tasa_nominal_calculada / 360 * no_dias_detalle;
+
+
+                    /*if(this.contarDecimals(interes_detalle) > 2){
                         interes_detalle =  this.truncarDecimales(interes_detalle);
-                    }
+                    }*/
 
-                    valor_cuota_detalle = (capital_amortizado_detalle + interes_detalle).toFixed(2);
+                    //valor_cuota_detalle = (capital_amortizado_detalle + interes_detalle).toFixed(2);
+                    valor_cuota_detalle = (capital_amortizado_detalle + interes_detalle);
 
-                    saldo_capital_detalle = (saldo_capital_detalle - capital_amortizado_detalle).toFixed(2);
+                    //saldo_capital_detalle = (saldo_capital_detalle - capital_amortizado_detalle).toFixed(2);
+                    saldo_capital_detalle = (saldo_capital_detalle - capital_amortizado_detalle);
 
 
                     if(saldo_capital_detalle > 0 && no_pago_detalle == datos_credito.plazo)
                     {
                         //valor_cuota_detalle = this.truncarDecimales(parseFloat(valor_cuota_detalle) + parseFloat(saldo_capital_detalle));
-                        capital_amortizado_detalle = (parseFloat(capital_amortizado_detalle) + parseFloat(saldo_capital_detalle)).toFixed(2);
-                        valor_cuota_detalle =  (parseFloat(valor_cuota_detalle) + parseFloat(saldo_capital_detalle)).toFixed(2);
-                        valor_cuota_detalle = this.truncarDecimales(valor_cuota_detalle);
+                        //capital_amortizado_detalle = (parseFloat(capital_amortizado_detalle) + parseFloat(saldo_capital_detalle)).toFixed(2);
+                        capital_amortizado_detalle = (parseFloat(capital_amortizado_detalle) + parseFloat(saldo_capital_detalle));
+                        //valor_cuota_detalle =  (parseFloat(valor_cuota_detalle) + parseFloat(saldo_capital_detalle)).toFixed(2);
+                        valor_cuota_detalle =  (parseFloat(valor_cuota_detalle) + parseFloat(saldo_capital_detalle));
+                        //valor_cuota_detalle = this.truncarDecimales(valor_cuota_detalle);
                         saldo_capital_detalle = 0;
                     }
 
                     valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
-                    valor_seguro_desgravamen_detalle = this.truncarDecimales(valor_seguro_desgravamen_detalle);
+                    //valor_seguro_desgravamen_detalle = this.truncarDecimales(valor_seguro_desgravamen_detalle);
 
 
                     tabla_amortizacion.push(
                         {
                             no_pago:  no_pago_detalle,
+                            fecha: fecha_cuota.toLocaleDateString(),
+                            no_dias: no_dias_detalle,
                             capital_amortizado: capital_amortizado_detalle,
                             interes: interes_detalle,
                             valor_cuota: valor_cuota_detalle,
