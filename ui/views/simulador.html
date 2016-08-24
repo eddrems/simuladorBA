@@ -45,7 +45,11 @@
                     <div class="col-sm-7">
                         <input type="text" id="plazo" ng-model="datos_credito.plazo" class="form-control" data-required="true" data-type="digits" data-range="[{{plazo_minimo}}, {{plazo_maximo}}]" >
                         <select ng-show="!modos_def.genera_tabla_amortizacion" ng-model="periodicidad_def" ng-options="periodicidad.denominacion for periodicidad in periodicidades track by periodicidad.id" class="form-control" style="margin-top: 5px;" ng-change="actualizarValidaciones()"></select>
-                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ periodicidad_def.texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ periodicidad_def.texto }}</strong></span>
+
+                        <!--<span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ periodicidad_def.texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ periodicidad_def.texto }}</strong></span>-->
+                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ frecuencias_pago_seleccionada.texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ frecuencias_pago_seleccionada.texto }}</strong></span>
+
+
                     </div>
                 </div>
                 

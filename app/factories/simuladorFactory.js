@@ -223,7 +223,8 @@ app.factory('simuladorFactory', function ($http) {
                         saldo_capital_detalle = 0;
                     }
 
-                    valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
+                    valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
+                    //valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
                     //valor_seguro_desgravamen_detalle = this.truncarDecimales(valor_seguro_desgravamen_detalle);
 
 
@@ -270,16 +271,16 @@ app.factory('simuladorFactory', function ($http) {
                         no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString("es-ES"));
                     }
                     fecha_actual = fecha_cuota.toLocaleDateString("es-ES");
-                    
+
                     //interes_detalle = saldo_capital_detalle * segmento_def.tasa_interes_porc / 360 * no_dias_detalle;
-                    
+
                     interes_detalle = saldo_capital_detalle * tasa_nominal_calculada / 360 * no_dias_detalle;
-                    
-                    
+
+
                     //*****CAPITAL*******
 
                     capital_amortizado_detalle = (valor_cuota_detalle - interes_detalle);
- 
+
                     saldo_capital_detalle = (saldo_capital_detalle - capital_amortizado_detalle);
                 
                     /*if(saldo_capital_detalle < 0)
@@ -301,8 +302,8 @@ app.factory('simuladorFactory', function ($http) {
 
                     capital_total = capital_total + parseFloat(capital_amortizado_detalle);
                 
-                    valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
-                
+                    //valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
+                    valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
                     
                     tabla_amortizacion.push(
                         {

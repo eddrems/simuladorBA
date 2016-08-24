@@ -4,7 +4,8 @@
         "id": 1,
         "denominacion": "Anual",
         "factor_calculo_anual": 1,
-        "factor_calculo_mensual": 12
+        "factor_calculo_mensual": 12,
+        "texto": "anio(s)"
     },
     
     {
@@ -12,7 +13,8 @@
         "id": 2,
         "denominacion": "Bimensual",
         "factor_calculo_anual": 6,
-        "factor_calculo_mensual": 2
+        "factor_calculo_mensual": 2,
+        "texto": "bimestre(s)"
     },
     
     {
@@ -20,7 +22,8 @@
         "id": 3,
         "denominacion": "Mensual",
         "factor_calculo_anual": 12,
-        "factor_calculo_mensual": 1
+        "factor_calculo_mensual": 1,
+        "texto": "mes(es)"
     },
     
     {
@@ -28,7 +31,8 @@
         "id": 4,
         "denominacion": "Trimestral",
         "factor_calculo_anual": 4,
-        "factor_calculo_mensual": 3
+        "factor_calculo_mensual": 3,
+        "texto": "trimestre(s)"
     },
     
     {
@@ -36,6 +40,7 @@
         "id": 5,
         "denominacion": "Semestral",
         "factor_calculo_anual": 2,
-        "factor_calculo_mensual": 6
+        "factor_calculo_mensual": 6,
+        "texto": "semestre(s)"
     }
 ]
