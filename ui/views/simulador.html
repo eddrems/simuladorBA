@@ -276,21 +276,25 @@
                                     <td><strong>Tasa de Interes Nominal:</strong><br />{{ segmento_def.tasa_interes | numeraljs:'0,0.00' }} %</td>
                                     <td><strong>Sistema de Amortizaci&oacute;n:</strong><br />{{ metodo_amortizacion_def.denominacion  }}</td>
                                     <td><strong>Plazo:</strong><br />{{ datos_credito.plazo  }}</td>
+
                                 </tr>
                                 <tr>
                                     <td><strong>Tasa de Inter&eacute;s  efectiva:</strong><br />{{ segmento_def.tasa_efectiva | numeraljs:'0,0.00'  }} %</td>
                                     <td><strong>Inter&eacute;s:</strong><br />{{ datos_credito.interes_total | numeraljs:'0,0.00' }}</td>
-                                    <td><strong>Monto l&iacute;quido:</strong><br />{{ datos_credito.monto | numeraljs:'0,0.00' }}</td>
+                                    <td><strong>Periodicidad:</strong><br />{{ frecuencias_pago_seleccionada.texto  }}</td>
+
                                 </tr>
                                 <tr>
                                     <td><strong>Total:</strong><br />{{ datos_credito.valor_total | numeraljs:'0,0.00'  }}</td>
                                     <td><strong>Cuota mensual estimada:</strong><br />{{ datos_credito.valor_cuota_aproximado | numeraljs:'0,0.00'  }}</td>
-                                    <td><strong>Costos y Gastos:</strong><br />0,00</td>
+                                    <td><strong>Monto l&iacute;quido:</strong><br />{{ datos_credito.monto | numeraljs:'0,0.00' }}</td>
+
                                 </tr>
                                 <tr>
                                     <td><strong>Seguro de desgravamen:</strong><br />{{ datos_credito.seguro_desgravamen | numeraljs:'0,0.00' }}</td>
                                     <!--<td><strong>Relaci&oacute;n de valores:</strong><br />{{ datos_credito.res_valor_relacion | numeraljs:'0,0.00'  }}</td>-->
                                     <td><strong>SOLCA:</strong><br />{{ datos_credito.valor_solca | numeraljs:'0,0.00'  }}</td>
+                                    <td><strong>Costos y Gastos:</strong><br />0,00</td>
                                 </tr>
                             </tbody>
                         </table>
