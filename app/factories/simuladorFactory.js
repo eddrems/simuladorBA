@@ -161,7 +161,10 @@ app.factory('simuladorFactory', function ($http) {
                     saldo_capital: datos_credito.monto,
                     seguro_desgravamen: '-'
                 });
-            valor_seguro_desgravamen_total = valor_seguro_desgravamen_total + ((datos_credito.monto * 0.054) / 100);
+            //valor_seguro_desgravamen_total = valor_seguro_desgravamen_total + ((datos_credito.monto * 0.054) / 100);
+
+            valor_seguro_desgravamen_total = valor_seguro_desgravamen_total + ( datos_credito.monto * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual);
+
 
 
             //valores detalles
@@ -223,7 +226,7 @@ app.factory('simuladorFactory', function ($http) {
                         saldo_capital_detalle = 0;
                     }
 
-                    valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
+                    valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 / 100  * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
                     //valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
                     //valor_seguro_desgravamen_detalle = this.truncarDecimales(valor_seguro_desgravamen_detalle);
 
@@ -303,7 +306,7 @@ app.factory('simuladorFactory', function ($http) {
                     capital_total = capital_total + parseFloat(capital_amortizado_detalle);
                 
                     //valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
-                    valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
+                    valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
                     
                     tabla_amortizacion.push(
                         {
