@@ -144,8 +144,9 @@ app.factory('simuladorFactory', function ($http) {
         tasa_efectiva_porc = tasa_efectiva_calculada * 100;
         
         //alert("tasa_efectiva_porc: "+tasa_efectiva_porc);
-        
-        
+
+        valor_seguro_desgravamen_total = valor_seguro_desgravamen_total + ( datos_credito.monto * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual);
+
         if(modos_def.genera_tabla_amortizacion)
         {
 
@@ -159,12 +160,10 @@ app.factory('simuladorFactory', function ($http) {
                     interes: '-',
                     valor_cuota: '-',
                     saldo_capital: datos_credito.monto,
-                    seguro_desgravamen: '-'
+                    //seguro_desgravamen: '-'
+                    seguro_desgravamen: valor_seguro_desgravamen_total
                 });
             //valor_seguro_desgravamen_total = valor_seguro_desgravamen_total + ((datos_credito.monto * 0.054) / 100);
-
-            valor_seguro_desgravamen_total = valor_seguro_desgravamen_total + ( datos_credito.monto * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual);
-
 
 
             //valores detalles
@@ -364,8 +363,8 @@ app.factory('simuladorFactory', function ($http) {
 
             valor_cuota_total = factory.redondearDecimales(capital_total, 2) + factory.redondearDecimales(interes_total, 2);
 
-            valor_seguro_desgravamen_total = (capital_total * 0.054) / 100;
-
+            //valor_seguro_desgravamen_total = (capital_total * 0.054) / 100;
+            valor_seguro_desgravamen_total = capital_total * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual
 
             datos_credito.capital_total = factory.redondearDecimales(capital_total, 2);
             datos_credito.interes_total = factory.redondearDecimales(interes_total, 2);
