@@ -25,7 +25,8 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
     $scope.tabla_amortizacion = [];
     $scope.plazo_minimo = 0;
     $scope.plazo_maximo = 0;
-    
+
+    $scope.plazo_texto = "";
     
     //*********VARIABLES PARA LA VISTA
     $scope.numeroCuotas = 0;
@@ -49,8 +50,12 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
         $scope.segmentos = data;
         $scope.segmento_def = $scope.segmentos[0];
 
-        $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
-        $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) * parseInt($scope.periodicidad_def.factor_calculo));
+       // $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
+        //$scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) * parseInt($scope.periodicidad_def.factor_calculo));
+
+       // $scope.plazo_minimo = (parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_anual));
+       // $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_mensual));
+
     });
     simuladorFactory.getMetodosAmortizacion().success(function (data, status, headers, config) {
         $scope.metodos_amortizacion = data;
@@ -100,7 +105,8 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
         $('#frm_params').parsley().validate();
 
         if ($('#frm_params').parsley().isValid()) {
-            
+
+            //calculo inicial de cuota
             $scope.valor_cuota_detalle = $scope.datos_credito.monto / $scope.datos_credito.plazo;
  
             //alert($scope.generarSimulacion2($scope.valor_cuota_detalle));
@@ -138,26 +144,67 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
         $('#frm_params').parsley().destroy();
         $('#monto').attr('catalogos-range', '[' + $scope.segmento_def.monto_minimo + ',' + $scope.segmento_def.monto_maximo + ']');
 
-        if($scope.modos_def.plazo_minimo == 0){
-            $('#plazo').attr('catalogos-range', '[' + (parseInt($scope.segmento_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo)) + ',' + ($scope.segmento_def.plazo_maximo * $scope.periodicidad_def.factor_calculo) + ']');
-        }else{
-            $('#plazo').attr('catalogos-range', '[' + (parseInt($scope.modos_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo)) + ',' + ($scope.segmento_def.plazo_maximo * $scope.periodicidad_def.factor_calculo) + ']');
+        //************OCULTAR FRECUENCIAS POR PAGO AL VENCIMIENTO
+
+        //alert("modalidad" +$scope.modos_def.id );
+        if($scope.modos_def.id == 1){//PAGOS PERIODICOS
+            $('#frecuencias').show();
+            $('#plazo').hide();
+            $scope.plazo_texto = $scope.frecuencias_pago_seleccionada.texto;
+
+            if($scope.modos_def.plazo_minimo == 0){
+                //$scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
+                $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_anual));
+            }else{//PAGOS AL VENCIMIENTO
+                //$scope.plazo_minimo = (parseInt($scope.modos_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
+                $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_anual));
+            }
+            //$scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) * parseInt($scope.periodicidad_def.factor_calculo));
+
+            $scope.plazo_minimo = (parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_anual));
+            $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_mensual));
+
+        }else{//PAGOS AL VENCIMIENTO
+            $('#frecuencias').hide();
+            $('#plazo').show();
+
+            $scope.plazo_texto = $scope.periodicidad_def.texto;
+
+            if($scope.periodicidad_def.id == 1){//dias
+                $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) * 30);
+                $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) * 30);
+            } else { //meses
+                $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo));
+                $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo));
+            }
+
         }
+
+
+        //**********************AQUI MODIFICAR *******************
+
+       /* if($scope.modos_def.plazo_minimo == 0){
+
+            //alert("frecuencia factor_mes "+$scope.frecuencias_pago_seleccionada.factor_calculo_anual);
+
+            //$('#plazo').attr('catalogos-range', '[' + (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.periodicidad_def.factor_calculo)) + ',' + ($scope.segmento_def.plazo_maximo * $scope.periodicidad_def.factor_calculo) + ']');
+            $('#plazo').attr('catalogos-range', '[' + (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_mensual)) + ',' + ($scope.segmento_def.plazo_maximo / $scope.frecuencias_pago_seleccionada.factor_calculo_anual) + ']');
+        }else{
+            //$('#plazo').attr('catalogos-range', '[' + (parseInt($scope.modos_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo)) + ',' + ($scope.segmento_def.plazo_maximo * $scope.periodicidad_def.factor_calculo) + ']');
+            $('#plazo').attr('catalogos-range', '[' + (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_mensual)) + ',' + ($scope.segmento_def.plazo_maximo / $scope.frecuencias_pago_seleccionada.factor_calculo_anual) + ']');
+        }*/
 
         $('#frm_params').parsley();
 
-        if($scope.modos_def.plazo_minimo == 0){
-            $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
-        }else{
-            $scope.plazo_minimo = (parseInt($scope.modos_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
-        }
-        $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) * parseInt($scope.periodicidad_def.factor_calculo));
+
 
     };
+
 
     $scope.actualizarUIMetodoPago = function () {
 
         //$scope.periodicidad_def = $scope.periodicidades[0];
+
         this.actualizarValidaciones();
     };
 });

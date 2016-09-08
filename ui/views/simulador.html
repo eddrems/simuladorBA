@@ -29,25 +29,35 @@
                 </div>
                 
                 
-                 <div class="form-group">
+                 <div id="frecuencias" class="form-group">
                     <label class="col-sm-4 control-label">Frecuencia de Pago:</label>
                     <div class="col-sm-7">
-                        <select ng-model="frecuencias_pago_seleccionada" ng-options="frecuencia.denominacion for frecuencia in frecuencias_pago track by frecuencia.id" class="form-control" ng-change="calcularNumeroCuotas()" ></select>
+                        <select ng-model="frecuencias_pago_seleccionada" ng-options="frecuencia.denominacion for frecuencia in frecuencias_pago track by frecuencia.id" class="form-control" ng-change="actualizarValidaciones()" ></select>
                         
                         <!--Plazo en: <select ng-model="tipo_plazo_seleccionada" ng-options="plazo.denominacion for plazo in tipo_plazo track by plazo.id" class="form-control" ng-change="test()" ></select>-->
                         
                     </div>
                 </div>
-                
-                
+
+                <div id="plazo" class="form-group" hidden="true">
+                    <label class="col-sm-4 control-label">Plazo en:</label>
+                    <div class="col-sm-7">
+                        <!--Plazo en: <select ng-model="tipo_plazo_seleccionada" ng-options="plazo.denominacion for plazo in tipo_plazo track by plazo.id" class="form-control" ng-change="test()" ></select>-->
+                        <select ng-show="!modos_def.genera_tabla_amortizacion" ng-model="periodicidad_def" ng-options="periodicidad.denominacion for periodicidad in periodicidades track by periodicidad.id" class="form-control" style="margin-top: 5px;" ng-change="actualizarValidaciones()"></select>
+                    </div>
+                </div>
+
+
+
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Plazo de Pago:</label>
                     <div class="col-sm-7">
+
                         <input type="text" id="plazo" ng-model="datos_credito.plazo" class="form-control" data-required="true" data-type="digits" data-range="[{{plazo_minimo}}, {{plazo_maximo}}]" >
-                        <select ng-show="!modos_def.genera_tabla_amortizacion" ng-model="periodicidad_def" ng-options="periodicidad.denominacion for periodicidad in periodicidades track by periodicidad.id" class="form-control" style="margin-top: 5px;" ng-change="actualizarValidaciones()"></select>
+
 
                         <!--<span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ periodicidad_def.texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ periodicidad_def.texto }}</strong></span>-->
-                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ frecuencias_pago_seleccionada.texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ frecuencias_pago_seleccionada.texto }}</strong></span>
+                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ plazo_texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ plazo_texto }}</strong></span>
 
 
                     </div>
@@ -281,7 +291,7 @@
                                 <tr>
                                     <td><strong>Tasa de Inter&eacute;s  efectiva:</strong><br />{{ segmento_def.tasa_efectiva | numeraljs:'0,0.00'  }} %</td>
                                     <td><strong>Inter&eacute;s:</strong><br />{{ datos_credito.interes_total | numeraljs:'0,0.00' }}</td>
-                                    <td><strong>Periodicidad:</strong><br />{{ frecuencias_pago_seleccionada.texto  }}</td>
+                                    <td><strong>Periodicidad:</strong><br />{{ plazo_texto }}</td>
 
                                 </tr>
                                 <tr>

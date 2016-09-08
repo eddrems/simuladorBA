@@ -8,6 +8,7 @@ app.factory('simuladorFactory', function ($http) {
     
     var tasa_nominal_porc = 0;
     var tasa_efectiva_porc = 0;
+    var fecha_dias;
     
     factory.getModos = function () {
         return $http.get('app/catalogos/dbmodo_pago.json');
@@ -71,8 +72,27 @@ app.factory('simuladorFactory', function ($http) {
     };
     
     //*****************
-    
-    
+
+
+    factory.sumaFecha = function(d, fecha)
+    {
+        var Fecha = new Date();
+        var sFecha = fecha || (Fecha.getDate() + "/" + (Fecha.getMonth() +1) + "/" + Fecha.getFullYear());
+        var sep = sFecha.indexOf('/') != -1 ? '/' : '-';
+        var aFecha = sFecha.split(sep);
+        var fecha = aFecha[2]+'/'+aFecha[1]+'/'+aFecha[0];
+        fecha= new Date(fecha);
+        fecha.setDate(fecha.getDate()+parseInt(d));
+        var anno=fecha.getFullYear();
+        var mes= fecha.getMonth()+1;
+        var dia= fecha.getDate();
+        mes = (mes < 10) ? ("0" + mes) : mes;
+        dia = (dia < 10) ? ("0" + dia) : dia;
+        var fechaFinal = dia+sep+mes+sep+anno;
+        return (fechaFinal);
+    }
+
+
     factory.restaFechas = function (f1, f2)
     {
         var aFecha1 = f1.split('/'); 
@@ -117,6 +137,7 @@ app.factory('simuladorFactory', function ($http) {
         
         var tasa_nominal_calculada = 0;
         var tasa_efectiva_calculada = 0;
+        var plazo_dias = 0;
         
                 
         //******calculo fecha
@@ -132,18 +153,48 @@ app.factory('simuladorFactory', function ($http) {
       
         fecha_cuota = new Date(anio,mes-1,dia);
         //alert("fecha_cuota: "+fecha_cuota);
-         
-         //*******tasa nominal calculada;
-        tasa_nominal_calculada = ((Math.pow(1 + segmento_def.tasa_efectiva_porc, 1 / frecuencias_pago_seleccionada.factor_calculo_anual))-1) * frecuencias_pago_seleccionada.factor_calculo_anual ;
-        tasa_nominal_porc = tasa_nominal_calculada * 100;
-        
-        //alert("tasa_nominal_calculada: "+tasa_nominal_calculada);
-       
-        //*******tasa efectiva calculada;
-        tasa_efectiva_calculada = (Math.pow((segmento_def.tasa_interes_porc / frecuencias_pago_seleccionada.factor_calculo_anual)+1, frecuencias_pago_seleccionada.factor_calculo_anual)) - 1 ;
-        tasa_efectiva_porc = tasa_efectiva_calculada * 100;
-        
-        //alert("tasa_efectiva_porc: "+tasa_efectiva_porc);
+
+
+
+
+        //******CALCULO DE TASAS POR EL MODO DE PAGO
+        if(modos_def.id == 1){//PAGOS PERIODICOS
+            //*******tasa nominal calculada;
+            tasa_nominal_calculada = ((Math.pow(1 + segmento_def.tasa_efectiva_porc, 1 / frecuencias_pago_seleccionada.factor_calculo_anual))-1) * frecuencias_pago_seleccionada.factor_calculo_anual ;
+            tasa_nominal_porc = tasa_nominal_calculada * 100;
+
+            //alert("tasa_nominal_calculada: "+tasa_nominal_calculada);
+
+            //*******tasa efectiva calculada;
+            tasa_efectiva_calculada = (Math.pow((segmento_def.tasa_interes_porc / frecuencias_pago_seleccionada.factor_calculo_anual)+1, frecuencias_pago_seleccionada.factor_calculo_anual)) - 1 ;
+            tasa_efectiva_porc = tasa_efectiva_calculada * 100;
+
+            //alert("tasa_efectiva_porc: "+tasa_efectiva_porc);
+        }else{//PAGOS AL VENCIMIENTO
+
+            //****clacular si es por meses el total de dias
+
+            if(periodicidad_def.id == 1){//dias
+                plazo_dias = datos_credito.plazo;
+            }else{//meses
+                plazo_dias = datos_credito.plazo * 30;
+            }
+
+            //alert("plazo_dias "+plazo_dias);
+
+            tasa_nominal_calculada = ((Math.pow(1 + segmento_def.tasa_efectiva_porc, plazo_dias / 365))-1) * (365 / plazo_dias ) ;
+            tasa_nominal_porc = tasa_nominal_calculada * 100;
+            //alert("tasa_nominal_calculada: "+tasa_nominal_calculada);
+
+            //=(POTENCIA((T30/(365/T24)+1);365/T24))-1
+
+            tasa_efectiva_calculada = (Math.pow((segmento_def.tasa_interes_porc/(365/plazo_dias)+1), 365/plazo_dias)) - 1 ;
+            tasa_efectiva_porc = tasa_efectiva_calculada * 100;
+            //alert("tasa efecttiva calculada: "+ tasa_efectiva_calculada);
+        }
+
+
+
 
         valor_seguro_desgravamen_total = valor_seguro_desgravamen_total + ( datos_credito.monto * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual);
 
@@ -181,6 +232,7 @@ app.factory('simuladorFactory', function ($http) {
                 while (Math.round(saldo_capital_detalle) > 0 && no_pago_detalle < datos_credito.plazo) {
                     no_pago_detalle = no_pago_detalle + 1;
 
+
                     //fecha_cuota***********************
                     fecha_cuota.setMonth(fecha_cuota.getMonth() + frecuencias_pago_seleccionada.factor_calculo_mensual);
 
@@ -216,7 +268,6 @@ app.factory('simuladorFactory', function ($http) {
 
                     if(saldo_capital_detalle > 0 && no_pago_detalle == datos_credito.plazo)
                     {
-                        //valor_cuota_detalle = this.truncarDecimales(parseFloat(valor_cuota_detalle) + parseFloat(saldo_capital_detalle));
                         //capital_amortizado_detalle = (parseFloat(capital_amortizado_detalle) + parseFloat(saldo_capital_detalle)).toFixed(2);
                         capital_amortizado_detalle = (parseFloat(capital_amortizado_detalle) + parseFloat(saldo_capital_detalle));
                         //valor_cuota_detalle =  (parseFloat(valor_cuota_detalle) + parseFloat(saldo_capital_detalle)).toFixed(2);
@@ -354,17 +405,28 @@ app.factory('simuladorFactory', function ($http) {
 
         }else//********
         {
+
+            fecha_dias = this.sumaFecha(plazo_dias);
+            //alert("suma dias fecha " + fecha_dias);
+
+
+            no_dias_detalle = this.restaFechas(fecha_actual,fecha_dias);
+
+           // alert("no dias detalle "+no_dias_detalle);
+
             capital_total = parseFloat(datos_credito.monto).toFixed(2);
 
-            var dias_plazo = (periodicidad_def.factor_calculo_dias *  datos_credito.plazo);
+            //var dias_plazo = (periodicidad_def.factor_calculo_dias *  datos_credito.plazo);
+
             //interes_total = (((capital_total * segmento_def.tasa_interes_porc) * dias_plazo) / 365);
-            
-            interes_total = (((capital_total * tasa_nominal_calculada) * dias_plazo) / 365);
+            //interes_total = (((capital_total * tasa_nominal_calculada) * plazo_dias) / 365);
+
+            interes_total = capital_total * tasa_nominal_calculada / 360 * plazo_dias;
 
             valor_cuota_total = factory.redondearDecimales(capital_total, 2) + factory.redondearDecimales(interes_total, 2);
 
-            //valor_seguro_desgravamen_total = (capital_total * 0.054) / 100;
-            valor_seguro_desgravamen_total = capital_total * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual
+            valor_seguro_desgravamen_total = (capital_total * 0.054) / 100;
+            //valor_seguro_desgravamen_total = capital_total * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual
 
             datos_credito.capital_total = factory.redondearDecimales(capital_total, 2);
             datos_credito.interes_total = factory.redondearDecimales(interes_total, 2);
@@ -372,22 +434,27 @@ app.factory('simuladorFactory', function ($http) {
             datos_credito.seguro_desgravamen = factory.redondearDecimales(valor_seguro_desgravamen_total, 2);
             datos_credito.res_valor_relacion = factory.redondearDecimales((valor_cuota_total / datos_credito.monto), 2);
 
-            if(dias_plazo >= 365){
+            if(plazo_dias >= 365){
                 datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100);
             }else{
                 datos_credito.valor_solca = factory.redondearDecimales(((datos_credito.monto * 0.5) * (periodicidad_def.factor_calculo_dias * datos_credito.plazo)) / 36000);
             }
 
             datos_credito.valor_total = (parseFloat(datos_credito.capital_total) + parseFloat(datos_credito.seguro_desgravamen) + parseFloat(datos_credito.interes_total) + parseFloat(datos_credito.valor_solca));
-            datos_credito.valor_cuota_total = datos_credito.valor_total;
+            //datos_credito.valor_cuota_total = datos_credito.valor_total;
+
+            datos_credito.valor_cuota_total = parseFloat(datos_credito.capital_total)  + parseFloat(datos_credito.interes_total);
             datos_credito.valor_costos_gastos = 10;//(valor_seguro_desgravamen_total + interes_total);
 
             tabla_amortizacion.push(
                 {
                     no_pago: 1,
+                    //fecha: fecha_cuota.toLocaleDateString("es-ES"),
+                    fecha: fecha_dias,
+                    no_dias: no_dias_detalle,
                     capital_amortizado: capital_total,
                     interes: interes_total,
-                    valor_cuota: valor_cuota_total,
+                    valor_cuota: capital_total + interes_total,
                     saldo_capital: datos_credito.monto,
                     seguro_desgravamen: valor_seguro_desgravamen_total
                 });
