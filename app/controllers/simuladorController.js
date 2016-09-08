@@ -149,7 +149,7 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
         //alert("modalidad" +$scope.modos_def.id );
         if($scope.modos_def.id == 1){//PAGOS PERIODICOS
             $('#frecuencias').show();
-            $('#plazo').hide();
+            //$('#plazo').hide();
             $scope.plazo_texto = $scope.frecuencias_pago_seleccionada.texto;
 
             if($scope.modos_def.plazo_minimo == 0){
@@ -166,7 +166,7 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
 
         }else{//PAGOS AL VENCIMIENTO
             $('#frecuencias').hide();
-            $('#plazo').show();
+            //$('#plazo').show();
 
             $scope.plazo_texto = $scope.periodicidad_def.texto;
 
