@@ -448,8 +448,9 @@ app.factory('simuladorFactory', function ($http) {
 
             //valor_seguro_desgravamen_total = (capital_total * 0.054) / 360  * periodicidad_def.factor_calculo_dias ;
 
+            //alert(periodicidad_def.factor_calculo_dias);
 
-           valor_seguro_desgravamen_total = capital_total * 0.054 / 100 * 360  / plazo_dias;
+            valor_seguro_desgravamen_total = capital_total * 0.054 / 100 * 12  / 360 * plazo_dias;
 
             datos_credito.capital_total = factory.redondearDecimales(capital_total, 2);
             datos_credito.interes_total = factory.redondearDecimales(interes_total, 2);
@@ -479,7 +480,8 @@ app.factory('simuladorFactory', function ($http) {
                     no_dias: no_dias_detalle,
                     capital_amortizado: capital_total,
                     interes: interes_total,
-                    valor_cuota: capital_total + interes_total,
+                    //valor_cuota: capital_total + interes_total,
+                    valor_cuota: "",
                     saldo_capital: datos_credito.monto,
                     seguro_desgravamen: valor_seguro_desgravamen_total
                 });
