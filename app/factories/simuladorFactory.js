@@ -37,6 +37,10 @@ app.factory('simuladorFactory', function ($http) {
     factory.getCatalogoTipoPlazo = function () {
         return $http.get('app/catalogos/dbtipo_plazo.json');
     };
+
+    factory.getCatalogoTipoPersona = function () {
+        return $http.get('app/catalogos/dbtipo_persona.json');
+    }
     
 
     factory.redondearDecimales = function (number, decimalplaces) {
@@ -197,9 +201,6 @@ app.factory('simuladorFactory', function ($http) {
             //alert("tasa efecttiva calculada: "+ tasa_efectiva_calculada);
         }
 
-
-
-
         valor_seguro_desgravamen_total = valor_seguro_desgravamen_total + ( datos_credito.monto * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual);
 
         if(modos_def.genera_tabla_amortizacion)
@@ -232,6 +233,8 @@ app.factory('simuladorFactory', function ($http) {
             var credito
 
             //generacion tabla
+
+            //*********ALEMANA
             if (metodo_amortizacion_def.id == "A") {
                 while (Math.round(saldo_capital_detalle) > 0 && no_pago_detalle < datos_credito.plazo) {
                     no_pago_detalle = no_pago_detalle + 1;
@@ -255,14 +258,15 @@ app.factory('simuladorFactory', function ($http) {
                         capital_amortizado_detalle =  this.truncarDecimales(capital_amortizado_detalle);
                     }
 
+                    //****CALCULO DEL INTERES
                     //interes_detalle = ((segmento_def.tasa_interes_porc / 12) * saldo_capital_detalle);
-                    interes_detalle = saldo_capital_detalle * tasa_nominal_calculada / 360 * no_dias_detalle;
-
-
                     /*if(this.contarDecimals(interes_detalle) > 2){
-                        interes_detalle =  this.truncarDecimales(interes_detalle);
-                    }*/
+                     interes_detalle =  this.truncarDecimales(interes_detalle);
+                     }*/
+                    interes_detalle = saldo_capital_detalle * tasa_nominal_calculada / modos_def.denominador_interes * no_dias_detalle;
 
+
+                    //*****CALCULO DEL CAPITAL*******
                     //valor_cuota_detalle = (capital_amortizado_detalle + interes_detalle).toFixed(2);
                     valor_cuota_detalle = (capital_amortizado_detalle + interes_detalle);
 
@@ -281,14 +285,10 @@ app.factory('simuladorFactory', function ($http) {
                     }
 
 
-
-
-                    valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 / 100  * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
-
-
+                    //****CALCULO DEL SEGURO DE DESGRAVAMEN
                     //valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
                     //valor_seguro_desgravamen_detalle = this.truncarDecimales(valor_seguro_desgravamen_detalle);
-
+                    valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 / 100  * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
 
                     tabla_amortizacion.push(
                         {
@@ -334,36 +334,27 @@ app.factory('simuladorFactory', function ($http) {
                     }
                     fecha_actual = fecha_cuota.toLocaleDateString("es-ES");
 
+                    //****CALCULO DEL INTERES
                     //interes_detalle = saldo_capital_detalle * segmento_def.tasa_interes_porc / 360 * no_dias_detalle;
+                    interes_detalle = saldo_capital_detalle * tasa_nominal_calculada / modos_def.denominador_interes * no_dias_detalle;
 
-                    interes_detalle = saldo_capital_detalle * tasa_nominal_calculada / 360 * no_dias_detalle;
 
-
-                    //*****CAPITAL*******
-
+                    //*****CALCULO DEL CAPITAL*******
                     capital_amortizado_detalle = (valor_cuota_detalle - interes_detalle);
 
                     saldo_capital_detalle = (saldo_capital_detalle - capital_amortizado_detalle);
                 
-                    /*if(saldo_capital_detalle < 0)
-                    {
-                        capital_amortizado_detalle = capital_amortizado_detalle - (saldo_capital_detalle * (-1));
-                        valor_cuota_detalle = valor_cuota_detalle - (saldo_capital_detalle * (-1));
-                        saldo_capital_detalle = 0;
-                    }*/
 
                     if(saldo_capital_detalle > 0 && no_pago_detalle == datos_credito.plazo)
                     {
-                       
                         if(no_pago_detalle == datos_credito.plazo-1){
                             capital_amortizado_detalle = capital_amortizado_detalle - (valor_cuota_detalle - interes_detalle);// this.truncarDecimales(parseFloat(capital_amortizado_detalle) + parseFloat(saldo_capital_detalle));
-       
                       }
-                       
                     }
 
                     capital_total = capital_total + parseFloat(capital_amortizado_detalle);
-                
+
+                    //****CALCULO DEL SEGURO DE DESGRAVAMEN
                     //valor_seguro_desgravamen_detalle = (saldo_capital_detalle * 0.054) / 100;
                     valor_seguro_desgravamen_detalle = saldo_capital_detalle * 0.054 / 100 * 12 / frecuencias_pago_seleccionada.factor_calculo_anual;
                     
@@ -403,54 +394,49 @@ app.factory('simuladorFactory', function ($http) {
             datos_credito.res_valor_relacion = valor_cuota_total / datos_credito.monto;
 
 
-            //SOLCA
-
-            // MONTO * 0.5%
-            //
-
+            //****CALCULO DEL SOLCA
             /*if(datos_credito.plazo >= 12){
                 datos_credito.valor_solca = (datos_credito.monto * 0.5) / 100;
             }else{
                 datos_credito.valor_solca = ((datos_credito.monto * 0.5) * (periodicidad_def.factor_calculo_dias * datos_credito.plazo)) / 36000;
             }*/
-
             datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100);
 
-            datos_credito.valor_total = (parseFloat(datos_credito.capital_total) + parseFloat(datos_credito.seguro_desgravamen) + parseFloat(datos_credito.interes_total) + parseFloat(datos_credito.valor_solca));
+
+            //****CALCULO DEL TOTAL
+            //datos_credito.valor_total = (parseFloat(datos_credito.capital_total) + parseFloat(datos_credito.seguro_desgravamen) + parseFloat(datos_credito.interes_total) + parseFloat(datos_credito.valor_solca));
+            datos_credito.valor_total = parseFloat(datos_credito.capital_total)  + parseFloat(datos_credito.interes_total);
 
             return tabla_amortizacion;
 
-        }else//********
+        }else//********PAGOS AL VENCIMIENTO
         {
 
             fecha_dias = this.sumaFecha(plazo_dias);
-            //alert("suma dias fecha " + fecha_dias);
-
 
             no_dias_detalle = this.restaFechas(fecha_actual,fecha_dias);
-
-           // alert("no dias detalle "+no_dias_detalle);
 
             capital_total = parseFloat(datos_credito.monto).toFixed(2);
 
             //var dias_plazo = (periodicidad_def.factor_calculo_dias *  datos_credito.plazo);
 
-            //interes_total = (((capital_total * segmento_def.tasa_interes_porc) * dias_plazo) / 365);
-            //interes_total = (((capital_total * tasa_nominal_calculada) * plazo_dias) / 365);
 
-            interes_total = capital_total * tasa_nominal_calculada / 360 * plazo_dias;
+            //****CALCULO DEL INTERES
+            //interes_total = (((capital_total * segmento_def.tasa_interes_porc) * dias_plazo) / 365);
+            //interes_total = (((capital_total * tasa_nominal_calculada) * plazo_dias) / 360);
+            interes_total = capital_total * tasa_nominal_calculada * plazo_dias / modos_def.denominador_interes;//denominador 365
 
             valor_cuota_total = factory.redondearDecimales(capital_total, 2) + factory.redondearDecimales(interes_total, 2);
 
 
-            //*******REVISAR EL CALCULO
-
-
+            //****CALCULO DEL SEGURO DE DESGRAVAMEN
             //valor_seguro_desgravamen_total = (capital_total * 0.054) / 360  * periodicidad_def.factor_calculo_dias ;
 
-            //alert(periodicidad_def.factor_calculo_dias);
-
             valor_seguro_desgravamen_total = capital_total * 0.054 / 100 * 12  / 360 * plazo_dias;
+
+
+            //valor_seguro_desgravamen_total = (capital_total * 0.054 * plazo_dias / 12) / 100;
+
 
             datos_credito.capital_total = factory.redondearDecimales(capital_total, 2);
             datos_credito.interes_total = factory.redondearDecimales(interes_total, 2);
@@ -458,16 +444,21 @@ app.factory('simuladorFactory', function ($http) {
             datos_credito.seguro_desgravamen = factory.redondearDecimales(valor_seguro_desgravamen_total, 2);
             datos_credito.res_valor_relacion = factory.redondearDecimales((valor_cuota_total / datos_credito.monto), 2);
 
-            /*if(plazo_dias >= 365){
+
+            //****CALCULO DEL SOLCA
+            datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100);
+            /*if(plazo_dias >= 360){
                 datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100);
             }else{
-                datos_credito.valor_solca = factory.redondearDecimales(((datos_credito.monto * 0.5) * (periodicidad_def.factor_calculo_dias * datos_credito.plazo)) / 36000);
+                //datos_credito.valor_solca = factory.redondearDecimales(((datos_credito.monto * 0.5) * (periodicidad_def.factor_calculo_dias * datos_credito.plazo)) / 36000);
+                datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100 * plazo_dias);
             }*/
 
-            datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100);
 
-            datos_credito.valor_total = (parseFloat(datos_credito.capital_total) + parseFloat(datos_credito.seguro_desgravamen) + parseFloat(datos_credito.interes_total) + parseFloat(datos_credito.valor_solca));
-            //datos_credito.valor_cuota_total = datos_credito.valor_total;
+            //****CALCULO DEL TOTAL
+            //datos_credito.valor_total = (parseFloat(datos_credito.capital_total) + parseFloat(datos_credito.seguro_desgravamen) + parseFloat(datos_credito.interes_total) + parseFloat(datos_credito.valor_solca));
+            datos_credito.valor_total = parseFloat(datos_credito.capital_total)  + parseFloat(datos_credito.interes_total);
+
 
             datos_credito.valor_cuota_total = parseFloat(datos_credito.capital_total)  + parseFloat(datos_credito.interes_total);
             datos_credito.valor_costos_gastos = 10;//(valor_seguro_desgravamen_total + interes_total);

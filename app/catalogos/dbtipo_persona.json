@@ -1,0 +1,10 @@
+[
+    {
+        "id":"NAT",
+        "denominacion": "Persona Natural"
+    },
+    {
+        "id":"JUR",
+        "denominacion":"Persona Juridica"
+    }
+]

@@ -3,12 +3,16 @@
         "id": "1",
         "denominacion": "Pagos Periódicos",
         "genera_tabla_amortizacion": true,
-        "plazo_minimo": 0
+        "plazo_minimo": 0,
+        "plazo_maximo": 0,
+        "denominador_interes": 360
     },
     {
         "id": "2",
         "denominacion": "Pago al Vencimiento no Periódico",
         "genera_tabla_amortizacion": false,
-        "plazo_minimo": 1
+        "plazo_minimo": 30,
+        "plazo_maximo": 360,
+        "denominador_interes": 365
     }
 ]

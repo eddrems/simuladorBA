@@ -20,6 +20,9 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
     $scope.tipo_plazo = [];
     $scope.tipo_plazo_seleccionada = {};
 
+    $scope.tipo_persona = [];
+    $scope.tipo_persona_seleccionada = {};
+
     
     $scope.datos_credito = {};
     $scope.tabla_amortizacion = [];
@@ -50,11 +53,9 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
         $scope.segmentos = data;
         $scope.segmento_def = $scope.segmentos[0];
 
-       // $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
-        //$scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) * parseInt($scope.periodicidad_def.factor_calculo));
-
-       // $scope.plazo_minimo = (parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_anual));
-       // $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_mensual));
+        $scope.plazo_texto = "anio(s)";
+        $scope.plazo_minimo = (parseInt(1));
+        $scope.plazo_maximo = (parseInt(4));
 
     });
     simuladorFactory.getMetodosAmortizacion().success(function (data, status, headers, config) {
@@ -72,15 +73,18 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
     
     
     //MESES Y ANIOS***********
-    
-     simuladorFactory.getCatalogoTipoPlazo().success(function (data, status, headers, config) {
+    simuladorFactory.getCatalogoTipoPlazo().success(function (data, status, headers, config) {
         $scope.tipo_plazo = data;
         $scope.tipo_plazo_seleccionada = $scope.tipo_plazo[0]; //seleccionada por default
     });
+
+    //PERSONA NATURAL O JURIDICA
+    simuladorFactory.getCatalogoTipoPersona().success(function (data, status, headers, config){
+        $scope.tipo_persona = data;
+        $scope.tipo_persona_seleccionada = $scope.tipo_persona[0];
+    });
     
-    
-    
-    
+
     
     //logica del aplicativo
     
@@ -92,7 +96,6 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
     
     
     //metodo del change
-    
     $scope.calcularNumeroCuotas = function () {
     
         //asuminos calculo mensual
@@ -146,21 +149,10 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
 
         //************OCULTAR FRECUENCIAS POR PAGO AL VENCIMIENTO
 
-        //alert("modalidad" +$scope.modos_def.id );
         if($scope.modos_def.id == 1){//PAGOS PERIODICOS
             $('#frecuencias').show();
             //$('#plazo').hide();
             $scope.plazo_texto = $scope.frecuencias_pago_seleccionada.texto;
-
-            if($scope.modos_def.plazo_minimo == 0){
-                //$scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
-                $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_anual));
-            }else{//PAGOS AL VENCIMIENTO
-                //$scope.plazo_minimo = (parseInt($scope.modos_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo));
-                $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_anual));
-            }
-            //$scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) * parseInt($scope.periodicidad_def.factor_calculo));
-
             $scope.plazo_minimo = (parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_anual));
             $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_mensual));
 
@@ -169,30 +161,20 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
             //$('#plazo').show();
 
             $scope.plazo_texto = $scope.periodicidad_def.texto;
-
-            if($scope.periodicidad_def.id == 1){//dias
-                $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo) * 30);
-                $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo) * 30);
-            } else { //meses
-                $scope.plazo_minimo = (parseInt($scope.segmento_def.plazo_minimo));
-                $scope.plazo_maximo = (parseInt($scope.segmento_def.plazo_maximo));
-            }
+            $scope.plazo_minimo = (parseInt($scope.modos_def.plazo_minimo));
+            $scope.plazo_maximo = (parseInt($scope.modos_def.plazo_maximo));
 
         }
 
-
-        //**********************AQUI MODIFICAR *******************
-
-       /* if($scope.modos_def.plazo_minimo == 0){
-
-            //alert("frecuencia factor_mes "+$scope.frecuencias_pago_seleccionada.factor_calculo_anual);
-
-            //$('#plazo').attr('catalogos-range', '[' + (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.periodicidad_def.factor_calculo)) + ',' + ($scope.segmento_def.plazo_maximo * $scope.periodicidad_def.factor_calculo) + ']');
-            $('#plazo').attr('catalogos-range', '[' + (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_mensual)) + ',' + ($scope.segmento_def.plazo_maximo / $scope.frecuencias_pago_seleccionada.factor_calculo_anual) + ']');
+        //************OCULTAR SEGURO DESGRAVAMEN POR TIPO DE PERSONA JURIDICA
+        if($scope.tipo_persona_seleccionada.id == "NAT"){
+            $('#div-seguro-desgravamen').show();
+            $('#fila-seguro-desgravamen').show();
         }else{
-            //$('#plazo').attr('catalogos-range', '[' + (parseInt($scope.modos_def.plazo_minimo) * parseInt($scope.periodicidad_def.factor_calculo)) + ',' + ($scope.segmento_def.plazo_maximo * $scope.periodicidad_def.factor_calculo) + ']');
-            $('#plazo').attr('catalogos-range', '[' + (parseInt($scope.segmento_def.plazo_minimo) / parseInt($scope.frecuencias_pago_seleccionada.factor_calculo_mensual)) + ',' + ($scope.segmento_def.plazo_maximo / $scope.frecuencias_pago_seleccionada.factor_calculo_anual) + ']');
-        }*/
+            $('#div-seguro-desgravamen').hide();
+            $('#fila-seguro-desgravamen').hide();
+        }
+
 
         $('#frm_params').parsley();
 
