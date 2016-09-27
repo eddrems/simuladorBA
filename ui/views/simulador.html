@@ -30,25 +30,8 @@
         padding-top: 5px;
     }
 
-    .m_footer2 a.f_ie {
-        background-attachment: scroll;
-        background-clip: border-box;
-        background-color: transparent;
-        background-image: url("ui/assets/images/ie.png");
-        background-origin: padding-box;
-        background-position: 0 0;
-        background-repeat: no-repeat;
-        background-size: auto auto;
-        padding-bottom: 5px;
-        padding-left: 25px;
-        padding-right: 0;
-        padding-top: 5px;
-    }
 
 </style>
-
-
-
 
 <div id="div_parametros" class="bg-white">
     <div class="row" style="padding-top: 50px;">
@@ -82,7 +65,7 @@
                     <label class="col-sm-4 control-label">Monto Solicitado:</label>
                     <div class="col-sm-7">
                         <input type="text" ng-model="datos_credito.monto" class="form-control" data-required="true" data-type="number" id="monto" data-range="[{{segmento_def.monto_minimo}}, {{segmento_def.monto_maximo}}]" >
-                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Monto M&iacute;nimo <strong>{{ segmento_def.monto_minimo }}</strong> &nbsp;&nbsp;&nbsp; Monto M&aacute;ximo <strong>{{ segmento_def.monto_maximo }}.</strong></span>
+                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Monto M&iacute;nimo <strong>{{ segmento_def.monto_minimo | numeraljs:'0,0.00'  }}</strong> &nbsp;&nbsp;&nbsp; Monto M&aacute;ximo <strong>{{ segmento_def.monto_maximo | numeraljs:'0,0.00'  }}.</strong></span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -133,7 +116,7 @@
                 <div class="form-group" ng-show="modos_def.genera_tabla_amortizacion">
                     <label class="col-sm-4 control-label">Tipo de Amortizaci&oacute;n:</label>
                     <div class="col-sm-7">
-                        <select ng-model="metodo_amortizacion_def" ng-options="metodo.denominacion for metodo in metodos_amortizacion track by metodo.id" class="form-control"></select>
+                        <select ng-model="metodo_amortizacion_def" ng-options="metodo.denominacion for metodo in metodos_amortizacion track by metodo.id" class="form-control" ng-change="actualizarValidaciones()"></select>
                     </div>
                 </div>
 
@@ -145,7 +128,7 @@
             </p>
             <footer>
 
-               <div class="custom m_footer2"  ><p>Para un correcto funcionamiento del sistema utilice la última versión de los siguientes navegadores: <a href="https://www.google.com/intl/es/chrome/browser/?hl=es" target="_blank" class="f_chrome">Google Chrome</a>, <a href="http://www.mozilla.org/es-ES/firefox/new/" target="_blank" class="f_ff">Mozilla Firefox</a></p></div>
+               <div class="custom m_footer2"  ><p><strong>* Para un correcto funcionamiento del sistema utilice la última versión de los navegadores:</strong> <a href="https://www.google.com/intl/es/chrome/browser/?hl=es" target="_blank" class="f_chrome"><strong>Google Chrome</strong></a>, <a href="http://www.mozilla.org/es-ES/firefox/new/" target="_blank" class="f_ff"><strong>Mozilla Firefox</strong></a></p></div>
 
             </footer>
         </div>
@@ -290,10 +273,17 @@
                             <label class="control-label" style="margin:0px"><small class="text-muted">Total:</small></label>
                             <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.valor_total | numeraljs:'0,0.00'  }}</strong></h5>
                         </div>
-                        <div class="form-group" style="margin: 0px;">
-                            <label class="control-label" style="margin:0px"><small class="text-muted">Cuota mensual estimada:</small></label>
+
+                        <div id="label-cuota-francesa" class="form-group" style="margin: 0px;">
+                            <label id="label-cuota" class="control-label" style="margin:0px"><small class="text-muted">Cuota mensual estimada:</small></label>
                             <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.valor_cuota_aproximado | numeraljs:'0,0.00'  }}</strong></h5>
                         </div>
+
+                        <div id="label-cuota-alemana"  class="form-group" style="margin: 0px;">
+                            <label  class="control-label" style="margin:0px"><small class="text-muted">Cuota Capital:</small></label>
+                            <h5 style="margin: 0px;" class="pull-right"><strong>{{ datos_credito.valor_cuota_aproximado | numeraljs:'0,0.00'  }}</strong></h5>
+                        </div>
+
                         <div class="form-group" style="margin: 0px;">
                             <label class="control-label" style="margin:0px"><small class="text-muted">Costos y Gastos:</small></label>
                             <h5 style="margin: 0px;" class="pull-right"><strong>0,00</strong></h5>
@@ -369,7 +359,8 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Total:</strong><br />{{ datos_credito.valor_total | numeraljs:'0,0.00'  }}</td>
-                                    <td><strong>Cuota mensual estimada:</strong><br />{{ datos_credito.valor_cuota_aproximado | numeraljs:'0,0.00'  }}</td>
+                                    <td id="td-report-cuota-francesa"><strong>Cuota mensual estimada:</strong><br />{{ datos_credito.valor_cuota_aproximado | numeraljs:'0,0.00'  }}</td>
+                                    <td id="td-report-cuota-alemana"><strong>Cuota Capital:</strong><br />{{ datos_credito.valor_cuota_aproximado | numeraljs:'0,0.00'  }}</td>
                                     <td><strong>Monto l&iacute;quido:</strong><br />{{ datos_credito.monto | numeraljs:'0,0.00' }}</td>
 
                                 </tr>
@@ -493,3 +484,10 @@
         <textarea name="reporte_contenido"  id="reporte_contenido"  ></textarea>
     </form>
 </div>
+
+
+<!--<script>
+    $(function() {
+        $('#monto').maskMoney();
+    })
+</script>-->

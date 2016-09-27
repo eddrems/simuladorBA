@@ -12,7 +12,7 @@
         "denominacion": "Pago al Vencimiento no Periódico",
         "genera_tabla_amortizacion": false,
         "plazo_minimo": 30,
-        "plazo_maximo": 360,
+        "plazo_maximo": 365,
         "denominador_interes": 365
     }
 ]

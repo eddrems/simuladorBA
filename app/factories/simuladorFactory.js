@@ -254,9 +254,11 @@ app.factory('simuladorFactory', function ($http) {
 
 
                     capital_amortizado_detalle = (datos_credito.monto / datos_credito.plazo);
+
                     if(this.contarDecimals(capital_amortizado_detalle) > 2){
                         capital_amortizado_detalle =  this.truncarDecimales(capital_amortizado_detalle);
                     }
+                    datos_credito.valor_cuota_aproximado = capital_amortizado_detalle;
 
                     //****CALCULO DEL INTERES
                     //interes_detalle = ((segmento_def.tasa_interes_porc / 12) * saldo_capital_detalle);
@@ -302,10 +304,10 @@ app.factory('simuladorFactory', function ($http) {
                             seguro_desgravamen: valor_seguro_desgravamen_detalle
                         });
 
-                    if(flg_valor_cuota_aproximado == 0){
+                    /*if(flg_valor_cuota_aproximado == 0){
                         flg_valor_cuota_aproximado = 1;
                         datos_credito.valor_cuota_aproximado = (valor_cuota_detalle);
-                    }
+                    }*/
 
                     capital_total = capital_total + (datos_credito.monto / datos_credito.plazo);
                     interes_total = interes_total + (interes_detalle);
@@ -430,12 +432,18 @@ app.factory('simuladorFactory', function ($http) {
 
 
             //****CALCULO DEL SEGURO DE DESGRAVAMEN
-            //valor_seguro_desgravamen_total = (capital_total * 0.054) / 360  * periodicidad_def.factor_calculo_dias ;
+            var calculo_dias = Math.floor(plazo_dias / 30);
+            var resto = plazo_dias % 30;
+            var calculo_dias_ajustado = 0;
 
-            valor_seguro_desgravamen_total = capital_total * 0.054 / 100 * 12  / 360 * plazo_dias;
+            if(resto > 0)
+                calculo_dias_ajustado = calculo_dias + 1;
+            else
+                calculo_dias_ajustado = calculo_dias;
 
+            //alert("calculo dias ajustado "+calculo_dias_ajustado);
 
-            //valor_seguro_desgravamen_total = (capital_total * 0.054 * plazo_dias / 12) / 100;
+            valor_seguro_desgravamen_total = (capital_total * 0.054 * calculo_dias_ajustado ) / 100;
 
 
             datos_credito.capital_total = factory.redondearDecimales(capital_total, 2);
@@ -446,13 +454,12 @@ app.factory('simuladorFactory', function ($http) {
 
 
             //****CALCULO DEL SOLCA
-            datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100);
-            /*if(plazo_dias >= 360){
+            if(plazo_dias > 360){
                 datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100);
             }else{
                 //datos_credito.valor_solca = factory.redondearDecimales(((datos_credito.monto * 0.5) * (periodicidad_def.factor_calculo_dias * datos_credito.plazo)) / 36000);
-                datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 100 * plazo_dias);
-            }*/
+                datos_credito.valor_solca = factory.redondearDecimales((datos_credito.monto * 0.5) / 36000 * plazo_dias);
+            }
 
 
             //****CALCULO DEL TOTAL

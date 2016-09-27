@@ -175,6 +175,23 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
             $('#fila-seguro-desgravamen').hide();
         }
 
+        //**********CAMBIAR NOMBRE DE LA CUOTA SEGUN METODO DE AMORTIZACION
+
+        //alert("metodo amortizacion " + $scope.metodo_amortizacion_def.id);
+
+        if ($scope.metodo_amortizacion_def.id == "A") { //ALEMANA
+            $('#label-cuota-alemana').show();
+            $('#label-cuota-francesa').hide();
+            $('#td-report-cuota-alemana').show();
+            $('#td-report-cuota-francesa').hide();
+
+        }else{ //*****FRANCESA
+            $('#label-cuota-francesa').show();
+            $('#label-cuota-alemana').hide();
+            $('#td-report-cuota-francesa').show();
+            $('#td-report-cuota-alemana').hide();
+        }
+
 
         $('#frm_params').parsley();
 
