@@ -1,4 +1,4 @@
-﻿var app = angular.module('simuladorApp', ['ngRoute']);
+﻿var app = angular.module('simuladorApp', ['ngRoute', 'ngMask']);
 
 app.provider('$numeraljsConfig', function () {
     var formats = {};

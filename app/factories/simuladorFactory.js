@@ -154,7 +154,7 @@ app.factory('simuladorFactory', function ($http) {
         fecha_actual = String(dia+"/"+mes+"/"+anio);
             
         //alert("fecha_actual: "+ fecha_actual);
-      
+
         fecha_cuota = new Date(anio,mes-1,dia);
         //alert("fecha_cuota: "+fecha_cuota);
 
@@ -252,6 +252,12 @@ app.factory('simuladorFactory', function ($http) {
                     }
                     fecha_actual = fecha_cuota.toLocaleDateString("es-ES");
 
+                    var anno=fecha_cuota.getFullYear();
+                    var mes= fecha_cuota.getMonth()+1;
+                    var dia= fecha_cuota.getDate();
+                    mes = (mes < 10) ? ("0" + mes) : mes;
+                    dia = (dia < 10) ? ("0" + dia) : dia;
+                    var fecha_formateada = dia+ "/" +mes+ "/" +anno;
 
                     capital_amortizado_detalle = (datos_credito.monto / datos_credito.plazo);
 
@@ -295,7 +301,8 @@ app.factory('simuladorFactory', function ($http) {
                     tabla_amortizacion.push(
                         {
                             no_pago:  no_pago_detalle,
-                            fecha: fecha_cuota.toLocaleDateString("es-ES"),
+                            //fecha: fecha_cuota.toLocaleDateString("es-ES"),
+                            fecha: fecha_formateada,
                             no_dias: no_dias_detalle,
                             capital_amortizado: capital_amortizado_detalle,
                             interes: interes_detalle,
@@ -326,8 +333,8 @@ app.factory('simuladorFactory', function ($http) {
                     
                     //fecha_cuota***********************
                     fecha_cuota.setMonth(fecha_cuota.getMonth() + frecuencias_pago_seleccionada.factor_calculo_mensual);
-                    
-                    
+
+
                     if(no_pago_detalle == 1){
                         no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString("es-ES"));
                     }
@@ -335,6 +342,13 @@ app.factory('simuladorFactory', function ($http) {
                         no_dias_detalle = this.restaFechas(fecha_actual,fecha_cuota.toLocaleDateString("es-ES"));
                     }
                     fecha_actual = fecha_cuota.toLocaleDateString("es-ES");
+
+                    var anno=fecha_cuota.getFullYear();
+                    var mes= fecha_cuota.getMonth()+1;
+                    var dia= fecha_cuota.getDate();
+                    mes = (mes < 10) ? ("0" + mes) : mes;
+                    dia = (dia < 10) ? ("0" + dia) : dia;
+                    var fecha_formateada = dia+ "/" +mes+ "/" +anno;
 
                     //****CALCULO DEL INTERES
                     //interes_detalle = saldo_capital_detalle * segmento_def.tasa_interes_porc / 360 * no_dias_detalle;
@@ -363,7 +377,8 @@ app.factory('simuladorFactory', function ($http) {
                     tabla_amortizacion.push(
                         {
                             no_pago: no_pago_detalle,
-                            fecha: fecha_cuota.toLocaleDateString("es-ES"),
+                            //fecha: fecha_cuota.toLocaleDateString("es-ES"),
+                            fecha: fecha_formateada,
                             no_dias: no_dias_detalle,
                             capital_amortizado: capital_amortizado_detalle,
                             interes: interes_detalle,

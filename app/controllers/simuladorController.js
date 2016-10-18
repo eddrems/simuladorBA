@@ -90,7 +90,7 @@ app.controller('simuladorController', function ($scope, $http, simuladorFactory)
     
     $scope.init = function () {
         $('#frm_params').parsley();
-
+        $('#monto').maskMoney();
     };
     
     

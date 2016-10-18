@@ -64,8 +64,11 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Monto Solicitado:</label>
                     <div class="col-sm-7">
+                        <!--
+                        <input type="text" ng-model="datos_credito.monto" class="form-control" data-required="true" data-type="number" mask="99,999,999.99" id="monto" data-range="[{{segmento_def.monto_minimo}}, {{segmento_def.monto_maximo}}]" >
+                        -->
                         <input type="text" ng-model="datos_credito.monto" class="form-control" data-required="true" data-type="number" id="monto" data-range="[{{segmento_def.monto_minimo}}, {{segmento_def.monto_maximo}}]" >
-                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Monto M&iacute;nimo <strong>{{ segmento_def.monto_minimo | numeraljs:'0,0.00'  }}</strong> &nbsp;&nbsp;&nbsp; Monto M&aacute;ximo <strong>{{ segmento_def.monto_maximo | numeraljs:'0,0.00'  }}.</strong></span>
+                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Monto M&iacute;nimo <strong>{{ segmento_def.monto_minimo | numeraljs:'0,0.00'  }}</strong> &nbsp;&nbsp;&nbsp; Monto M&aacute;ximo <strong>{{ segmento_def.monto_maximo | numeraljs:'0,0.00'  }}</strong></span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -103,7 +106,7 @@
                         <input type="text" id="plazo" ng-model="datos_credito.plazo" class="form-control" data-required="true" data-type="digits" data-range="[{{plazo_minimo}}, {{plazo_maximo}}]" >
 
                         <!--<span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ periodicidad_def.texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ periodicidad_def.texto }}</strong></span>-->
-                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo <strong>{{ plazo_minimo }} {{ plazo_texto }}.</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo <strong>{{ plazo_maximo }} {{ plazo_texto }}</strong></span>
+                        <span class="help-block m-b-none text-primary-dker " style="font-size: 11px;">Plazo M&iacute;nimo: <strong>{{ plazo_minimo }} {{ plazo_texto }}</strong>  &nbsp;&nbsp;&nbsp; Plazo M&aacute;ximo: <strong>{{ plazo_maximo }} {{ plazo_texto }}</strong></span>
 
 
                     </div>
@@ -163,7 +166,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group" style="margin: 0px;">
-                                        <label class="control-label"><small class="text-muted">Tasa de Interes Nominal:</small></label>
+                                        <label class="control-label"><small class="text-muted">Tasa de Inter&eacute;s Nominal:</small></label>
                                         <!--<h5 style="margin: 0px;"><strong>{{ segmento_def.tasa_interes | numeraljs:'0,0.00' }} %</strong></h5>-->
                                         <h5 style="margin: 0px;"><strong>{{ tasa_nominal_porc | numeraljs:'0,0.00' }} %</strong></h5>
                                     </div>
@@ -201,7 +204,7 @@
                         <tr>
                             <th style="width: 100px;">No. de Pago</th>
                             <th style="width: 100px;"> Fecha</th>
-                            <th style="width: 100px;"> No. de Dias</th>
+                            <th style="width: 100px;"> No. de D&iacute;as</th>
                             <th style="width: 130px;">Capital</th>
                             <th style="width: 130px;">Inter&eacute;s</th>
                             <th style="width: 140px;">Valor Cuota</th>
@@ -346,13 +349,13 @@
                                     <td colspan="3"><strong>Segmento:</strong><br />{{ segmento_def.denominacion  }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Tasa de Interes Nominal:</strong><br />{{ segmento_def.tasa_interes | numeraljs:'0,0.00' }} %</td>
+                                    <td><strong>Tasa de Inter&eacute;s Nominal:</strong><br />{{ segmento_def.tasa_interes | numeraljs:'0,0.00' }} %</td>
                                     <td><strong>Sistema de Amortizaci&oacute;n:</strong><br />{{ metodo_amortizacion_def.denominacion  }}</td>
                                     <td><strong>Plazo:</strong><br />{{ datos_credito.plazo  }}</td>
 
                                 </tr>
                                 <tr>
-                                    <td><strong>Tasa de Inter&eacute;s  efectiva:</strong><br />{{ segmento_def.tasa_efectiva | numeraljs:'0,0.00'  }} %</td>
+                                    <td><strong>Tasa de Inter&eacute;s  Efectiva:</strong><br />{{ segmento_def.tasa_efectiva | numeraljs:'0,0.00'  }} %</td>
                                     <td><strong>Inter&eacute;s:</strong><br />{{ datos_credito.interes_total | numeraljs:'0,0.00' }}</td>
                                     <td><strong>Periodicidad:</strong><br />{{ plazo_texto }}</td>
 
@@ -386,7 +389,7 @@
                 <tr>
                     <th style="width: 100px; background-color: #FCEDEC;">No. de Pago</th>
                     <th style="width: 100px; background-color: #FCEDEC;">Fecha</th>
-                    <th style="width: 100px; background-color: #FCEDEC;">No. de Dias</th>
+                    <th style="width: 100px; background-color: #FCEDEC;">No. de D&iacute;as</th>
                     <th style="width: 100px; background-color: #FCEDEC;">Capital</th>
                     <th style="width: 100px; background-color: #FCEDEC;">Inter&eacute;s</th>
                     <th style="width: 100px; background-color: #FCEDEC;">Valor Cuota</th>

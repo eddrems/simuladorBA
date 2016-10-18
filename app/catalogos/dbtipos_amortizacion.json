@@ -1,10 +1,10 @@
 [
     {
         "id": "F",
-        "denominacion": "Sistema Francés (Fija)"
+        "denominacion": "Sistema Francés (Cuota Fija)"
     },
     {
         "id": "A",
-        "denominacion": "Sistema Alemán (Decreciente)"
+        "denominacion": "Sistema Alemán (Cuota Decreciente)"
     }
 ]
